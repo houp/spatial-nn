@@ -47,7 +47,7 @@ def make_graphs_for_rules(rules, sizes, layer_count):
 
 layer_count = 2
 #rules = [95, 110, 150, 222]
-rules = 150
+rules = [150]
 sizes = [1000 + 1000*x for x in range(9)]
 #sizes = [10000 + 10000*x for x in range(9)]
 
