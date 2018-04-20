@@ -46,9 +46,9 @@ def make_graphs_for_rules(rules, sizes, layer_count):
         make_plot(errors, r)
 
 layer_count = 10
-#rules = [95, 110, 150, 222]
-rules = [150]
-sizes = [1000 + 1000*x for x in range(8)]
-#sizes = [10000 + 10000*x for x in range(8)]
+rules = [95, 110, 150, 222]
+#rules = [150]
+#sizes = [1000 + 1000*x for x in range(8)]
+sizes = [10000 + 10000*x for x in range(8)]
 
 make_graphs_for_rules(rules, sizes, layer_count)
