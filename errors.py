@@ -7,8 +7,6 @@ def find_errors_for_rule(rule, sizes, layer_count):
     errors = {}
     for m in sizes:
         dataset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_' + str(m) + '.txt', delimiter=",")
-        X = dataset[:,0:32]
-        Y = dataset[:,32]
 
         model = Sequential()
         model.add(Dense(32, input_dim=32, activation='relu'))
@@ -20,7 +18,7 @@ def find_errors_for_rule(rule, sizes, layer_count):
 
         model.compile(loss='mean_squared_error', optimizer='adam')
 
-        model.fit(x = dataset[:,0:32], y = dataset[:,32], epochs=150, batch_size=32)
+        model.fit(x = dataset[:,0:32], y = dataset[:,32], epochs=150, batch_size=32, verbose=0)
         testset = np.loadtxt('data/testsets/' + str(rule) + '_test.txt', delimiter=",")
         X_test = testset[:,0:32]
         Y_test = testset[:,32]
@@ -36,8 +34,8 @@ def find_errors_for_rules(rules, sizes, layer_count):
 
 
 layer_count = 3
-rules = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-sizes = [1000 + 1000*x for x in range(8)]
+rules = [r for r in range(201)]
+sizes = [1000 + 1000*x for x in range(9)]
 
 
 print(find_errors_for_rules(rules, sizes, layer_count))
