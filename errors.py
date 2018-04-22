@@ -34,7 +34,7 @@ def find_errors_for_rules(rules, sizes, layer_count):
 
 
 layer_count = 3
-rules = [r for r in range(201)]
+rules = [r for r in range(201, 256)]
 sizes = [1000 + 1000*x for x in range(9)]
 
 
