@@ -1,19 +1,31 @@
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import AlphaDropout
+
+from keras import regularizers
+
 import numpy as np
 import sys
 
 def find_error_for_rule(rule, size, layer_count, afun, epc, bs):
-    if(size>1000):
-        size=1000
+    if(size > 10000):
+        size = 10000
         
-    dataset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_1000.txt', delimiter=",")
+    dataset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_10000.txt', delimiter=",")
 
     model = Sequential()
-    model.add(Dense(32, input_dim=32, activation=afun))
+    model.add(Dense(32, input_dim=32, activation=afun, kernel_initializer='lecun_normal', kernel_regularizer=regularizers.l2(0.05)))
 
-    for _ in range(0, layer_count):
-        model.add(Dense(64, activation=afun))
+    reg_base = 0.1
+    drop_base = 0.1
+    exp_base = max(6, layer_count)
+
+    for layer in range(0, layer_count):
+        reg = reg_base / (layer+1)
+        drop = drop_base / (layer+1)
+        model.add(Dense(2**(exp_base-layer), activation=afun, kernel_initializer='lecun_normal', activity_regularizer=regularizers.l2(reg), bias_regularizer=regularizers.l2(reg), kernel_regularizer=regularizers.l2(reg)))
+        if(layer != layer_count - 1):
+            model.add(AlphaDropout(drop))
 
     model.add(Dense(1, activation='sigmoid'))
 
@@ -35,16 +47,19 @@ try:
 except:
     pass
 
-step=0
+rule_start = 0
+rule_count = 256
+
 try:
-    step=int(sys.argv[2])
+    rule_start, rule_count = int(sys.argv[2]), int(sys.argv[3])
 except:
     pass
 
-    
-for rule in range(step*64,(step+1)*64-1):
-    for size in [100, 250, 500, 1000]:
-        for batch_size in [100, 50, 5]:
-            for epochs in [10, 50, 500, 1000]:
-                print(rule,size,batch_size,epochs,afun,find_error_for_rule(rule,size,1,afun,epochs,batch_size))
+print("rule, training set size, batch size, epochs, activation function, (min error, avg. error, max error, std. dev. of err, meadian error)")
+
+for rule in range(rule_start, rule_count):
+    for size in [500]:
+        for batch_size in [50]:
+            for epochs in [250]:
+                print(rule,size,batch_size,epochs,afun,find_error_for_rule(rule,size,5,afun,epochs,batch_size))
                 sys.stdout.flush()
