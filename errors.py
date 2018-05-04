@@ -21,14 +21,14 @@ def find_error_for_rule(model, rule, size, epc, bs):
 
     model.fit(x = X, y = Y, epochs=epc, batch_size=bs, verbose=0, shuffle=True)
 
-    testset = np.loadtxt('data/testsets2/' + str(rule) + '_test.txt', delimiter=",")
+    testset = np.loadtxt('data/testsets3/' + str(rule) + '_test.txt', delimiter=",")
     X_test = testset[:,0:32]
     Y_test = testset[:,32]
 
     predictions = model.predict(X_test)
     plt.plot(predictions,'r',Y_test,'b')
-    plt.title('Rule '+str(rule),fontsize=12)
-    plt.savefig('rule-'+str(rule)+'.png')
+    plt.title('Rule '+str(rule)+" train. set set "+str(size),fontsize=12)
+    plt.savefig('diff-plot/rule-'+str(rule)+'.png')
     plt.clf()
 
     error_vector = np.square(np.subtract(Y_test, predictions))
