@@ -10,24 +10,26 @@ import sys
 
 import matplotlib.pyplot as plt
 
-def find_error_for_rule(model, rule, size, epc, bs):
-    if(size > 10000):
-        size = 10000
+def find_error_for_rule(model, rule, packs, epc, bs):
+    if(packs > 8):
+        packs = 8
         
-    dataset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_10000.txt', delimiter=",")
+    datasets = [np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_'+str(i)+'.txt', delimiter=",") for i in range(1,packs+1)]
     
-    X = dataset[0:size,0:32]
-    Y = dataset[0:size,32]
+    dataset = np.concatenate(tuple(datasets))
+
+    X = dataset[:,0:32]
+    Y = dataset[:,32]
 
     model.fit(x = X, y = Y, epochs=epc, batch_size=bs, verbose=0, shuffle=True)
 
-    testset = np.loadtxt('data/testsets3/' + str(rule) + '_test.txt', delimiter=",")
+    testset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_9.txt', delimiter=",")
     X_test = testset[:,0:32]
     Y_test = testset[:,32]
 
     predictions = model.predict(X_test)
     plt.plot(predictions,'r',Y_test,'b')
-    plt.title('Rule '+str(rule)+" train. set set "+str(size),fontsize=12)
+    plt.title('Rule '+str(rule),fontsize=12)
     plt.savefig('diff-plot/rule-'+str(rule)+'.png')
     plt.clf()
 
@@ -59,7 +61,7 @@ except:
     pass
 
 rule_start = 0
-rule_count = 256
+rule_count = 255
 
 try:
     rule_start, rule_count = int(sys.argv[2]), int(sys.argv[3])
@@ -70,8 +72,8 @@ except:
 print("rule, training set size, batch size, epochs, activation function, (min error, avg. error, max error, std. dev. of err, meadian error)")
 
 for rule in range(rule_start, rule_count):
-    for size in [512]:
+    for packs in [8]:
         for batch_size in [64]:
             for epochs in [512]:
-                print(rule, size, batch_size, epochs, afun, find_error_for_rule(get_model(afun, 6), rule, size, epochs, batch_size))
+                print(rule, packs, batch_size, epochs, afun, find_error_for_rule(get_model(afun, 6), rule, packs, epochs, batch_size))
                 sys.stdout.flush()
