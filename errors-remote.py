@@ -9,12 +9,13 @@ import numpy as np
 import sys
 
 import matplotlib.pyplot as plt
+import urllib.request
 
 def find_error_for_rule(model, rule, packs, epc, bs, name):
     if(packs > 8):
         packs = 8
         
-    datasets = [np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_'+str(i)+'.txt', delimiter=",") for i in range(1,packs+1)]
+    datasets = [np.loadtxt(urllib.request.urlopen('https://raw.githubusercontent.com/houp/spatial-nn/randomData/data/'+ str(rule) + '/'+str(rule)+'_'+str(i)+'.txt'), delimiter=",") for i in range(1,packs+1)]
     
     dataset = np.concatenate(tuple(datasets))
 
@@ -23,7 +24,7 @@ def find_error_for_rule(model, rule, packs, epc, bs, name):
 
     model.fit(x = X, y = Y, epochs=epc, batch_size=bs, verbose=0, shuffle=True)
 
-    testset = np.loadtxt('data/' + str(rule) + '/' + str(rule) + '_9.txt', delimiter=",")
+    testset = np.loadtxt(urllib.request.urlopen('https://raw.githubusercontent.com/houp/spatial-nn/randomData/data/'+ str(rule) + '/'+str(rule)+'_9.txt'), delimiter=","))
     X_test = testset[:,0:32]
     Y_test = testset[:,32]
 
